@@ -20,7 +20,9 @@ npm run build
 npm run preview
 ```
 
-Vite outputs the deployable static site to `dist/`. Netlify is configured to run `npm install && npm run build` and publish `dist`. Use a Git-connected Netlify deployment so Netlify can install the dependency and build the site; uploading this source ZIP directly as a prebuilt static folder will not run the build command.
+Vite outputs the deployable static site to `dist/`. Netlify is configured to run `npm install && npm run check && npm run build` and publish `dist`. The check verifies the application entry point and ROM module before Vite runs. Use a Git-connected Netlify deployment so Netlify can install the dependency and build the site; uploading this source ZIP directly as a prebuilt static folder will not run the build command.
+
+Preserve the repository's folder layout when uploading source files. `index.html` loads `/src/app.js`, which imports `src/nes-rom.js` and `src/styles.css`. These files must remain in `src/`; the manifest, service worker and icon must remain in `public/`. A deploy reporting that `/src/app.js` cannot be resolved needs the source layout repair included in its deployed revision. Redeploying the older revision alone will repeat the error.
 
 ## Playing a game
 
