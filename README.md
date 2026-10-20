@@ -1,6 +1,6 @@
-# RetroPlay — Stage 05 (NES emulation)
+# RetroPlay — Stage 06 (ZIP ROM import + NES emulation)
 
-RetroPlay is a static PWA intended for Netlify. This stage integrates the JSNES 2.1.0 browser emulator for locally imported `.nes` files only. SNES, Mega Drive, N64 and arcade entries remain library-only; they are not emulated yet.
+RetroPlay is a static PWA intended for Netlify. This stage supports importing ROM files from standard ZIP archives (stored and deflate compression) and integrates the JSNES 2.1.0 browser emulator for `.nes` files only. ZIP archives are unpacked in memory; supported ROM entries are imported individually into the local library. SNES, Mega Drive, N64 and arcade entries remain library-only; they are not emulated yet.
 
 ## Local development
 
@@ -20,9 +20,7 @@ npm run build
 npm run preview
 ```
 
-Vite outputs the deployable static site to `dist/`. Netlify is configured to run `npm install && npm run check && npm run build` and publish `dist`. The check verifies the application entry point and ROM module before Vite runs. Use a Git-connected Netlify deployment so Netlify can install the dependency and build the site; uploading this source ZIP directly as a prebuilt static folder will not run the build command.
-
-Preserve the repository's folder layout when uploading source files. `index.html` loads `/src/app.js`, which imports `src/nes-rom.js` and `src/styles.css`. These files must remain in `src/`; the manifest, service worker and icon must remain in `public/`. A deploy reporting that `/src/app.js` cannot be resolved needs the source layout repair included in its deployed revision. Redeploying the older revision alone will repeat the error.
+Vite outputs the deployable static site to `dist/`. Netlify is configured to run `npm install && npm run build` and publish `dist`. Use a Git-connected Netlify deployment so Netlify can install the dependency and build the site; uploading this source ZIP directly as a prebuilt static folder will not run the build command.
 
 ## Playing a game
 
@@ -48,3 +46,10 @@ The service worker caches the built application shell and same-origin assets as 
 ## License notices
 
 JSNES is licensed under Apache-2.0. Its license and copyright notices are available from the upstream project: https://github.com/bfirsh/jsnes. The dependency is installed from the published `jsnes@2.1.0` npm package at build time; this project does not bundle a modified copy of the emulator source.
+
+## ZIP import behavior
+
+- Accepts ordinary, non-encrypted ZIP archives; extracts supported ROM entries in memory without uploading them to a server.
+- Supports ZIP methods 0 (stored) and 8 (deflate), verifies CRC-32 and declared uncompressed size, and limits archives to 1,000 entries, 256 MiB per ROM, and 512 MiB total expanded ROM data.
+- ZIP64, multi-volume archives, encrypted archives, unsupported compression methods, and nested ZIPs are not supported. If the browser does not support `DecompressionStream('deflate-raw')`, use a current browser or extract the ROM file before importing.
+- Only `.nes` files can be played in this version. Other supported ROM types can be added to the library but are not emulated yet.

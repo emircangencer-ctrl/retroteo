@@ -15,3 +15,16 @@ The container cannot resolve `registry.npmjs.org` (DNS `EAI_AGAIN`), so `npm ins
 ## Scope
 
 Actual emulation is connected for NES `.nes` files only. Other platforms remain unsupported for gameplay. Save-state and SRAM UI are future work.
+
+
+## Stage 06 ZIP import tests (2026-10-20)
+
+- ZIP containing a valid `.nes` and an unrelated text file: PASS.
+- Invalid/non-ZIP input: PASS (readable rejection).
+- ZIP with no supported ROM entries: PASS (readable rejection).
+- Multiple supported ROM entries: PASS.
+- Corrupt ZIP payload/CRC mismatch: PASS (rejected).
+- `node --test tests/*.test.mjs`: 13 tests passed.
+- JavaScript syntax checks for `app.js`, `nes-rom.js`, and `zip-rom.js`: PASS.
+- Live Netlify/browser test after deploying this revision: NOT YET RUN.
+- Deflate compression in a real browser and mobile Safari: NOT YET verified live.
